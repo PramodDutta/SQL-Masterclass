@@ -1,6 +1,5 @@
-```sql
-## TASK 0
 
+## TASK 0
 
 SELECT 'Hello World';
 
@@ -10,6 +9,7 @@ CREATE TABLE Courses (
     Price int,
     PRIMARY KEY (id)
 );
+
 
 CREATE TABLE StudentCourses (
             StudentId BigInt NOT NULL, 
@@ -349,8 +349,6 @@ SHOW TRIGGERS;
 
 DROP TRIGGER before_address_update_na;
 
-
-```
 
 
 
