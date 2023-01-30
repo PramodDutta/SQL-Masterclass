@@ -1,0 +1,356 @@
+## TASK 0
+
+SELECT 'Hello World';
+
+CREATE TABLE Courses (
+    id bigint NOT NULL AUTO_INCREMENT,
+    Name varchar(255) NOT NULL,
+    Price int,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE StudentCourses (
+            StudentId BigInt NOT NULL, 
+            CourseId BigInt NOT Null
+    
+)
+
+select * from Students;
+select * from Courses;
+
+select * from StudentCourses;
+
+ALTER TABLE StudentCourses ADD FOREIGN KEY (StudentId) REFERENCES Students(id);
+
+ALTER TABLE StudentCourses ADD FOREIGN KEY (CourseId) REFERENCES Courses(id);
+
+
+INSERT INTO `Courses` (`Name`, `Price`) VALUES ('APITB','10000');
+
+
+INSERT INTO `Students` (`name`, `age`, `phone`) VALUES ('Aju','32','989829323');
+INSERT INTO `Students` (`name`, `age`, `phone`) VALUES ('Ajim','34','829329323');
+INSERT INTO `Students` (`name`, `age`, `phone`) VALUES ('Pramod','32','239392323');
+
+
+SELECT * from Students;
+SELECT * from Courses;
+
+SELECT * from StudentCourses;
+
+INSERT INTO `StudentCourses` (`StudentId`, `CourseId`) VALUES ('7','1');
+INSERT INTO `StudentCourses` (`StudentId`, `CourseId`) VALUES ('2','1');
+INSERT INTO `StudentCourses` (`StudentId`, `CourseId`) VALUES ('3','2');
+
+
+INSERT INTO `StudentCourses` (`StudentId`, `CourseId`) VALUES ('3','2');
+
+SELECT * from `StudentCourses` WHERE StudentId = 3;
+
+
+
+## TASK 01
+
+show tables;
+
+# This will run
+# Customer Database, id and name
+CREATE TABLE `customers` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) DEFAULT NULL,
+    PRIMARY KEY(`id`)
+);
+
+DESCRIBE `customers`;
+
+insert into customers(name) values ("Pramod");
+insert into customers(name) values ("Dutta");
+insert into customers(name) values ("PraD");
+insert into customers(name) values ("Quick");
+insert into customers(name,address) values ("Quick","ND");
+
+select * from `customers`;
+
+select name from `customers`;
+
+select * from `customers` where id = 2;
+select * from `customers` where `name` like "%ram%";
+
+
+#Add a new column
+ALTER TABLE `customers` add column(identity varchar(64) NOT NULL);
+
+UPDATE `customers` set identity = 'TTA0001' where id = 1;
+update customers set identity = 'TTA0002' where id = 2;
+update customers set identity = 'TTA0003' where id = 3;
+update customers set identity = 'Q0' where id = 3;
+update customers set identity = 'Q1' where id = 5;
+update customers set identity = 'Q2' where id = 4;
+
+
+select * from `customers` where identity like 'Q%';
+
+
+select * from `customers` where name = 'Pramod' and identity = 'TTA0002';
+describe table customers;
+
+
+#Rename a column
+ALTER TABLE `customers` RENAME column name to names;
+ALTER TABLE `customers` RENAME column names to name;
+
+
+# REMOVING A Coulumn
+ALTER TABLE `customers` DROP COLUMN identity;
+
+select * from `customers`;
+
+ALTER TABLE `customers` MODIFY column name varchar(64);
+
+ALTER TABLE `customers` ADD column(address text(100) NOT NULL);
+
+
+
+
+## TASK 02
+
+
+# Customers with Orders and Orders have products. ( CRM)
+show tables;
+
+create table `products` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`name` varchar(255) unique ,
+`price` decimal(10,2) NOT NULL,  
+    PRIMARY KEY (`id`)
+);
+
+select * from products;
+
+# To make the Product name unique
+ALTER TABLE `products` MODIFY COLUMN name varchar(255) NOT NULL UNIQUE;
+
+INSERT INTO `products`(name,price) values("ATB","139");
+
+# Use the decimal system
+INSERT INTO `products`(name,price) values("ATB1","139.00");
+INSERT INTO `products`(name,price) values("MTB","99.00");
+INSERT INTO `products`(name,price) values("APITB","99.00");
+
+
+#Count the Total Products
+select count(*) from `products`;
+
+#Check Product where price is > 99
+select * from `products` where `price` > 99;
+
+#order by
+select name from `products` order by name asc;
+select name from `products` order by name desc;
+select * from `products` order by price desc;
+
+#Limit
+select * from `products` order by price desc limit 1;
+
+
+# Mix the Where Order by and Limit
+select * from `customers` where name like 'PRA%' order by name limit 2;
+
+
+select * from `products`;
+
+
+## Understand the relationship now
+## Customer has 1 to many relation with Orders
+## Order has 1 to 1 relation with customers
+## Order has 1 to many relation with Order_Items
+## Order Items has 1 to many relation with Products
+
+
+CREATE TABLE `orders` (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        customers_id int(11) NOT NULL,
+        order_number varchar(255) NOT NULL,
+        ordered_at datetime NOT NULL,
+        primary key(id)
+);
+
+SELECT * from `orders`;
+select * from `customers`;
+
+insert into `orders` (customers_id,order_number, ordered_at) values (1,"TTA01", current_timestamp);
+
+#Rerun
+insert into `orders` (customers_id,order_number, ordered_at) values (1,"TTA01", current_timestamp);
+#There shouldn’t be two or more orders with the same order number.
+ALTER TABLE `orders` MODIFY column order_number varchar(255) NOT NULL UNIQUE;
+
+DELETE from `orders` where id = 4;
+
+ALTER table `orders` add constraint orders_customer_fk foreign key(customers_id) references customers(id);
+
+
+insert into `orders` (customers_id,order_number, ordered_at) values (4,"TTA02", current_timestamp);
+# If Customer doesn't exist we don't allow the insertion
+insert into `orders` (customers_id,order_number, ordered_at) values (10,"TTA03", current_timestamp);
+
+
+
+create table order_items (id int(11) not null auto_increment, order_id int(11) not null, product_id int(11) not null, price numeric(15, 2) not null, quantity int(11), primary key(id));
+
+alter table order_items add constraint order_items_order_fk foreign key(order_id) references orders(id);
+
+
+
+SELECT * from `order_items`;
+
+describe order_items;
+
+
+alter table order_items add constraint order_items_product_fk foreign key(product_id) references products(id);
+
+#Show create command
+show create table order_items;
+
+
+select * from `customers`;
+select * from `products`;
+SELECT * from `order_items`;
+SELECT * from `orders`;
+
+
+insert into order_items (order_id, product_id, price, quantity) values (3, 1, 139, 3);
+insert into order_items (order_id, product_id, price, quantity) values (7, 4, 99, 3);
+
+
+#Unique index on multiple columns#
+
+create unique index order_items_order_product_uidx on order_items(order_id, product_id);
+
+
+show create table order_items;
+
+
+insert into `orders` (customers_id,order_number, ordered_at) values (3,"TTA04", current_timestamp);
+
+
+select * from order_items;
+
+
+select * from customers join orders on customers.id = orders.customers_id;
+
+
+select * from customers join orders on customers.id = orders.customers_id join order_items on orders.id = order_items.order_id;
+
+
+
+#How many customers do we have with orders?
+select count(*) from customers join orders on orders.customers_id = customers.id;
+select count(distinct customers.id) from customers join orders on orders.customers_id = customers.id;
+
+select count(distinct orders.customers_id) from orders;
+
+
+#How many customers do we have that haven’t placed an order?
+select * from customers left join orders on customers.id = orders.customers_id;
+
+#Null also we don't want
+select * from customers left join orders on customers.id = orders.customers_id where orders.id is NULL;
+
+#only name
+select customers.name from customers left join orders on customers.id = orders.customers_id where orders.id is NULL;
+
+# Total Price and Quantity Sold
+select sum(price), sum(quantity) from order_items;
+
+select order_items.order_id, sum(price), sum(quantity) from order_items group by order_id;
+
+
+#Amount per order
+select order_items.order_id, sum(price * quantity) as amount_per_order from order_items group by order_id;
+
+
+
+
+#Final Total
+select customers.id as customers_id, customers.name, orders.order_number, orders.id as order_id, order_totals.amount_per_order from customers join orders on orders.customers_id = customers.id
+    join (
+         select order_items.order_id, sum(price * quantity) as amount_per_order from order_items group by order_id
+       ) as order_totals on order_totals.order_id = orders.id;
+       
+#Best Buyer by desc limit 1
+
+select * from customers;
+
+select * from customers inner join orders on customers.id = orders.customers_id;
+
+select * from customers right join orders on customers.id = orders.customers_id;
+
+select * from customers join orders on customers.id = orders.customers_id;
+
+#Self Join
+SELECT A.name AS CustomerName1, B.name AS CustomerName2, A.id, A.address
+FROM customers A,customers B
+WHERE A.id <> B.id
+AND A.address = B.address;
+
+
+#Union
+#SELECT column_name(s) FROM table1
+#UNION
+#SELECT column_name(s) FROM table2;
+#Same columns
+select * from customers UNION ALL select * from customers;
+
+
+select * from customers;
+
+#VIEW 
+# CREATE OR REPLACE VIEW
+CREATE OR REPLACE VIEW Shivani AS
+SELECT name FROM customers WHERE id < 5;
+
+select * from Shivani;
+
+SELECT * from order_items where quantity > 2;
+
+
+
+#Set Vaue
+SET @q_value = 2;
+call  myproc4(@q_value)
+
+
+
+
+
+
+
+SELECT * from customers;
+
+insert into customers(name,address) values ("Shivani2","NA");
+
+#Trigger
+delimiter //
+CREATE TRIGGER before_address_update_null BEFORE INSERT ON customers
+    FOR EACH ROW 
+    BEGIN
+        IF (NEW.address = "NA") THEN 
+        SET NEW.address = "INDIA";
+        END IF;
+    END
+delimiter ;
+
+UPDATE customers SET address = 'USA' WHERE id = 11;
+
+SHOW TRIGGERS;
+
+DROP TRIGGER before_address_update_na;
+
+
+
+
+
+
+
+
