@@ -350,7 +350,6 @@ SHOW TRIGGERS;
 DROP TRIGGER before_address_update_na;
 
 
-
 ```
 
 
