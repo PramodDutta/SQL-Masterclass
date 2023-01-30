@@ -1,4 +1,6 @@
+```sql
 ## TASK 0
+
 
 SELECT 'Hello World';
 
@@ -349,7 +351,7 @@ DROP TRIGGER before_address_update_na;
 
 
 
-
+```
 
 
 
